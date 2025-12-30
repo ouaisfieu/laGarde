@@ -1,0 +1,109 @@
+
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Le Cinquième Pouvoir Associatif — Site</title>
+  <meta name="description" content="Site de lecture et de ressources autour du Dossier Blanc : Le Cinquième Pouvoir Associatif." />
+  <link rel="stylesheet" href="./assets/site.css" />
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <div class="topbar" role="navigation" aria-label="En-tête">
+        <div class="brand">
+          <div class="mark" aria-hidden="true"><span>DB</span></div>
+          <div style="min-width:0">
+            <h1>Le Cinquième Pouvoir Associatif</h1>
+            <p>Dossier blanc • Ressources • Méthodes • Déploiement</p>
+          </div>
+        </div>
+        <div class="actions">
+          <button class="btn" type="button" onclick="window.print()">Imprimer</button>
+          <button class="btn" type="button" id="copyLinkBtn">Copier le lien</button>
+        </div>
+      </div>
+
+      <div class="hero">
+        <p class="kicker">Portail</p>
+        <h1 class="title">Site complet</h1>
+        <p class="subtitle">
+          Une version web sobre et professionnelle du <strong>Dossier Blanc</strong>, avec une page “Ressources &amp; plan d’action”
+          destinée à être complétée et publiée (GitHub Pages, hébergement statique, etc.).
+        </p>
+
+        <div class="meta" aria-label="Accès rapide">
+          <span class="chip"><span class="dot"></span><a href="./dossier-blanc.html">Lire le dossier</a></span>
+          <span class="chip"><span class="dot"></span><a href="./page-ressources.html">Page suivante : Ressources</a></span>
+          <span class="chip"><span class="dot"></span><a href="./README.html">README (local)</a></span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="layout">
+      <aside class="toc panel" aria-label="Navigation">
+        <h2>Navigation</h2>
+        <nav>
+          <a href="./index.html">Accueil</a>
+          <a href="./dossier-blanc.html">Dossier blanc</a>
+          <a href="./page-ressources.html">Ressources &amp; plan d’action</a>
+          <a href="./mentions.html">Mentions</a>
+        </nav>
+        <small>
+          Publication recommandée : dépôt Git + GitHub Pages (site statique).<br/>
+          Le contenu est modulaire : ajoute des pages, des annexes, des PDF, des liens.
+        </small>
+      </aside>
+
+      <article aria-label="Présentation">
+        <section>
+          <h2>Ce que contient ce site</h2>
+          <div class="grid">
+            <div class="card">
+              <h4>1) Dossier blanc</h4>
+              <p>Le document principal, mis en page, lisible, imprimable.</p>
+            </div>
+            <div class="card">
+              <h4>2) Page suivante</h4>
+              <p>Une page structurée pour développer le contenu : sources, méthode, exemples, kit.</p>
+            </div>
+            <div class="card">
+              <h4>3) Mentions</h4>
+              <p>Cadre d’usage, responsabilité, droits, contact, versioning.</p>
+            </div>
+            <div class="card">
+              <h4>4) Assets partagés</h4>
+              <p>Un CSS/JS commun pour garder un rendu cohérent sur toutes les pages.</p>
+            </div>
+          </div>
+
+          <div class="callout">
+            Prochaine étape : colle ici (ou dans un message) le contenu à développer pour “Ressources &amp; plan d’action”.
+            J’intégrerai le texte dans la page suivante en gardant la même charte graphique.
+          </div>
+        </section>
+      </article>
+    </div>
+  </main>
+
+  <footer class="wrap">
+    <div class="panel" style="background:transparent">
+      <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between">
+        <div>
+          <div style="font-weight:700; color:var(--text); margin-bottom:2px">Cinquième Pouvoir Associatif — Site statique</div>
+          <div>Structure minimale • Sobre • Pro • Facile à publier</div>
+        </div>
+        <div style="display:flex; gap:10px">
+          <a href="./dossier-blanc.html">Lire</a>
+          <a href="./page-ressources.html">Ressources</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./assets/site.js"></script>
+</body>
+</html>
