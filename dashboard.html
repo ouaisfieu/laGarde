@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Dashboard de Veille Citoyenne</title>
+  <meta name="description" content="Dashboard complet pour monitorer une veille citoyenne : sources, signaux, production, impact, alertes et traçabilité."/>
+  <style>
+    :root{
+      --bg:#0b0f14; --panel:#0f1620; --card:#121a25; --text:#e5e7eb; --muted:#9ca3af;
+      --line:#1f2937; --accent:#22c55e; --warn:#f59e0b; --danger:#ef4444; --info:#60a5fa;
+      --radius:14px; --max:1400px;
+      --font: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font);line-height:1.55}
+    header{border-bottom:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.04),rgba(255,255,255,0))}
+    .wrap{max-width:var(--max);margin:0 auto;padding:16px}
+    .top{display:flex;gap:12px;align-items:center;justify-content:space-between}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:40px;height:40px;border-radius:12px;border:1px solid var(--line);display:grid;place-items:center;background:var(--panel)}
+    .logo span{font-family:var(--mono);font-size:12px;color:var(--muted)}
+    h1{font-size:18px;margin:0}
+    .actions{display:flex;gap:8px;flex-wrap:wrap}
+    button, .btn{
+      background:transparent;color:var(--text);border:1px solid var(--line);
+      padding:8px 12px;border-radius:12px;cursor:pointer;font-weight:600
+    }
+    button:hover,.btn:hover{background:rgba(255,255,255,.06)}
+    main{padding:16px}
+    .grid{display:grid;gap:14px}
+    @media(min-width:900px){.grid{grid-template-columns:320px 1fr}}
+    .panel{border:1px solid var(--line);border-radius:var(--radius);background:var(--panel);padding:12px}
+    .kpis{display:grid;gap:12px}
+    @media(min-width:900px){.kpis{grid-template-columns:repeat(4,1fr)}}
+    .kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px}
+    .kpi h3{margin:0 0 6px;font-size:12px;color:var(--muted)}
+    .kpi .v{font-size:24px;font-weight:800}
+    .kpi .t{font-size:12px;color:var(--muted)}
+    .row{display:grid;gap:14px}
+    @media(min-width:900px){.row{grid-template-columns:1fr 1fr}}
+    table{width:100%;border-collapse:collapse}
+    th,td{padding:8px;border-bottom:1px solid var(--line);font-size:13px}
+    th{color:var(--muted);text-align:left}
+    .tag{padding:4px 8px;border-radius:999px;border:1px solid var(--line);font-size:11px}
+    .ok{color:var(--accent)} .warn{color:var(--warn)} .bad{color:var(--danger)} .info{color:var(--info)}
+    .small{font-size:12px;color:var(--muted)}
+    .input{width:100%;background:transparent;color:var(--text);border:1px solid var(--line);border-radius:10px;padding:8px}
+    footer{border-top:1px solid var(--line);padding:12px;color:var(--muted)}
+  </style>
+</head>
+<body>
+<header>
+  <div class="wrap top">
+    <div class="brand">
+      <div class="logo"><span>VEILLE</span></div>
+      <div>
+        <h1>Dashboard de Veille Citoyenne</h1>
+        <div class="small">Monitoring en temps réel • Sources • Signaux • Production • Impact</div>
+      </div>
+    </div>
+    <div class="actions">
+      <button onclick="exportJSON()">Exporter</button>
+      <button onclick="resetData()">Reset</button>
+      <button onclick="window.print()">Imprimer</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap grid">
+  <!-- LEFT -->
+  <aside class="panel">
+    <h2>Configuration rapide</h2>
+    <div class="small">Ces paramètres pilotent les indicateurs.</div>
+    <label class="small">Nom du projet</label>
+    <input class="input" id="projectName" value="Réseau de veille citoyenne"/>
+    <label class="small">Territoire</label>
+    <input class="input" id="territory" value="Commune / Région"/>
+    <label class="small">Thématiques</label>
+    <input class="input" id="themes" value="Budget, Urbanisme, Social"/>
+    <hr style="border-color:var(--line)"/>
+    <h3>Ajouter une source</h3>
+    <input class="input" id="srcName" placeholder="Nom de la source"/>
+    <input class="input" id="srcType" placeholder="Type (budget, presse, doc officiel…)"/>
+    <button onclick="addSource()">Ajouter</button>
+    <hr style="border-color:var(--line)"/>
+    <h3>Journal &amp; traçabilité</h3>
+    <textarea class="input" id="log" rows="6" placeholder="Notes, décisions, corrections, errata…"></textarea>
+  </aside>
+
+  <!-- RIGHT -->
+  <section class="panel">
+    <div class="kpis">
+      <div class="kpi"><h3>Sources actives</h3><div class="v" id="kSources">0</div><div class="t">Qualifiées</div></div>
+      <div class="kpi"><h3>Signaux détectés</h3><div class="v" id="kSignals">0</div><div class="t">Sur période</div></div>
+      <div class="kpi"><h3>Publications</h3><div class="v" id="kPubs">0</div><div class="t">Fiches/rapports</div></div>
+      <div class="kpi"><h3>Impact</h3><div class="v" id="kImpact">0</div><div class="t">Réponses / changements</div></div>
+    </div>
+
+    <div class="row">
+      <div class="panel">
+        <h2>Sources</h2>
+        <table>
+          <thead><tr><th>Nom</th><th>Type</th><th>Statut</th></tr></thead>
+          <tbody id="sources"></tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <h2>Signaux &amp; alertes</h2>
+        <table>
+          <thead><tr><th>Date</th><th>Signal</th><th>Niveau</th></tr></thead>
+          <tbody id="signals"></tbody>
+        </table>
+        <div class="small">Un signal = info nouvelle, incohérence, engagement non tenu, opportunité.</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="panel">
+        <h2>Production</h2>
+        <table>
+          <thead><tr><th>Date</th><th>Type</th><th>Statut</th></tr></thead>
+          <tbody id="pubs"></tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <h2>Impact &amp; suivi</h2>
+        <table>
+          <thead><tr><th>Date</th><th>Action</th><th>Résultat</th></tr></thead>
+          <tbody id="impact"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="wrap">
+  <div>Dashboard statique — Données locales (LocalStorage) — Libre &amp; sobre</div>
+</footer>
+
+<script>
+const state = JSON.parse(localStorage.getItem('veille')) || {sources:[],signals:[],pubs:[],impact:[]};
+const $ = id => document.getElementById(id);
+
+function save(){ localStorage.setItem('veille', JSON.stringify(state)); render(); }
+
+function render(){
+  $('sources').innerHTML = state.sources.map(s=>`<tr><td>${s.n}</td><td>${s.t}</td><td><span class="tag ok">active</span></td></tr>`).join('');
+  $('signals').innerHTML = state.signals.map(s=>`<tr><td>${s.d}</td><td>${s.m}</td><td class="${s.l}">${s.l}</td></tr>`).join('');
+  $('pubs').innerHTML = state.pubs.map(p=>`<tr><td>${p.d}</td><td>${p.t}</td><td>${p.s}</td></tr>`).join('');
+  $('impact').innerHTML = state.impact.map(i=>`<tr><td>${i.d}</td><td>${i.a}</td><td>${i.r}</td></tr>`).join('');
+  $('kSources').textContent = state.sources.length;
+  $('kSignals').textContent = state.signals.length;
+  $('kPubs').textContent = state.pubs.length;
+  $('kImpact').textContent = state.impact.length;
+}
+
+function addSource(){
+  const n=$('srcName').value, t=$('srcType').value;
+  if(!n||!t) return;
+  state.sources.push({n,t});
+  $('srcName').value=''; $('srcType').value='';
+  save();
+}
+
+function exportJSON(){
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='veille-export.json'; a.click();
+}
+
+function resetData(){ if(confirm('Tout effacer ?')){ localStorage.removeItem('veille'); location.reload(); } }
+
+render();
+</script>
+</body>
+</html>
